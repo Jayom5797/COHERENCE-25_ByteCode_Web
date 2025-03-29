@@ -1,0 +1,482 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Alerts - Smart City</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+            --success-color: #4CAF50;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --card-bg: #ffffff;
+            --hover-bg: #f5f5f5;
+            --modal-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-border: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-header i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .sidebar-header span {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sidebar-links {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-links a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-links a:hover,
+        .sidebar-links a.active {
+            background-color: #34495e;
+        }
+
+        .sidebar-links a i {
+            margin-right: 10px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--text-primary);
+            font-size: 24px;
+        }
+
+        .alert-form {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .alert-history {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .alert-card {
+            border-left: 4px solid var(--danger-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .alert-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .alert-card p {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .alert-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .priority-high {
+            border-left-color: var(--danger-color);
+        }
+
+        .priority-medium {
+            border-left-color: var(--warning-color);
+        }
+
+        .priority-low {
+            border-left-color: var(--primary-color);
+        }
+
+        /* Add these new styles */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .status-success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+
+        .status-error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-city"></i>
+            <span>Smart City</span>
+        </div>
+        <nav class="sidebar-links">
+            <a href="{% url 'admin_dashboard' %}" >
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'complaints_dashboard' %}">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Complaints</span>
+            </a>
+            <a href="{% url 'analytics_dashboard' %}">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="{% url 'emergency_alerts_dashboard' %}" class="active">
+                <i class="fas fa-user-circle"></i>
+                <span>Emergency Alerts</span>
+            </a>
+            <a href="{% url 'citizens_dashboard' %}">
+                <i class="fas fa-users"></i>
+                <span>Citizens</span>
+            </a>
+            <a href="{% url 'events_dashboard' %}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="{% url 'logout' %}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1><i class="fas fa-exclamation-triangle"></i> Emergency Alerts</h1>
+            </div>
+
+            <div class="alert-form">
+                <h2>Send Emergency Alert</h2>
+                <form id="alertForm">
+                    <div class="form-group">
+                        <label for="alertTitle">Alert Title</label>
+                        <input type="text" id="alertTitle" required placeholder="Enter alert title">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="alertMessage">Alert Message</label>
+                        <textarea id="alertMessage" required placeholder="Enter detailed alert message"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">Priority Level</label>
+                        <select id="priority" required>
+                            <option value="high">High Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="low">Low Priority</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="affectedAreas">Affected Area</label>
+                        <select id="affectedAreas" required>
+                            <option value="">Select an area</option>
+                            <option value="noida">Noida, Uttar Pradesh</option>
+                            <option value="mumbai">Mumbai, Maharashtra</option>
+                            <option value="bangalore">Bangalore, Karnataka</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submitButton">
+                        <i class="fas fa-paper-plane"></i> Send Alert
+                    </button>
+                    <div class="loading" id="loadingIndicator">
+                        <div class="loading-spinner"></div>
+                        <p>Sending emergency alerts... Please wait.</p>
+                    </div>
+                    <div class="status-message" id="statusMessage"></div>
+                </form>
+            </div>
+
+            <div class="alert-history">
+                <h2>Alert History</h2>
+                <div class="alert-card priority-high">
+                    <h3>Severe Weather Warning</h3>
+                    <p>Heavy rainfall and potential flooding expected in downtown area. Please take necessary precautions.</p>
+                    <div class="alert-meta">
+                        <span>Sent: 2 hours ago</span>
+                        <span>Affected: Downtown, Mumbai</span>
+                    </div>
+                </div>
+
+                <div class="alert-card priority-medium">
+                    <h3>Traffic Advisory</h3>
+                    <p>Major road construction on Main Street. Expect delays and plan alternate routes.</p>
+                    <div class="alert-meta">
+                        <span>Sent: 5 hours ago</span>
+                        <span>Affected: Downtown, Noida</span>
+                    </div>
+                </div>
+
+                <div class="alert-card priority-low">
+                    <h3>Power Maintenance Notice</h3>
+                    <p>Scheduled power maintenance in West District. Brief interruptions may occur.</p>
+                    <div class="alert-meta">
+                        <span>Sent: 1 day ago</span>
+                        <span>Affected: Mumbai</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('alertForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = document.getElementById('submitButton');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Disable the submit button and show loading
+            submitButton.disabled = true;
+            loadingIndicator.style.display = 'block';
+            statusMessage.style.display = 'none';
+            
+            const alertData = {
+                title: document.getElementById('alertTitle').value,
+                message: document.getElementById('alertMessage').value,
+                priority: document.getElementById('priority').value,
+                area: document.getElementById('affectedAreas').value,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/send-emergency-sms/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(alertData)
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Show success message
+                    statusMessage.textContent = result.message;
+                    statusMessage.className = 'status-message status-success';
+                    statusMessage.style.display = 'block';
+                    
+                    // Add the alert to the history section
+                    addAlertToHistory(alertData);
+                    
+                    // Reset form
+                    this.reset();
+                } else {
+                    // Show error message
+                    statusMessage.textContent = 'Failed to send alert: ' + result.message;
+                    statusMessage.className = 'status-message status-error';
+                    statusMessage.style.display = 'block';
+                }
+            } catch (error) {
+                // Show error message
+                statusMessage.textContent = 'Error sending alert: ' + error.message;
+                statusMessage.className = 'status-message status-error';
+                statusMessage.style.display = 'block';
+            } finally {
+                // Re-enable the submit button and hide loading
+                submitButton.disabled = false;
+                loadingIndicator.style.display = 'none';
+            }
+        });
+
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Function to add new alert to history
+        function addAlertToHistory(alertData) {
+            const alertHistory = document.querySelector('.alert-history');
+            const newAlert = document.createElement('div');
+            newAlert.className = `alert-card priority-${alertData.priority}`;
+            
+            const currentTime = new Date().toLocaleString();
+            
+            newAlert.innerHTML = `
+                <h3>${alertData.title}</h3>
+                <p>${alertData.message}</p>
+                <div class="alert-meta">
+                    <span>Sent: ${currentTime}</span>
+                    <span>Affected: ${alertData.area}</span>
+                </div>
+            `;
+            
+            // Insert at the beginning of the history
+            alertHistory.insertBefore(newAlert, alertHistory.firstChild);
+        }
+    </script>
+</body>

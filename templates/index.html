@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart City Dashboard - Future of Urban Living</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        overflow: hidden;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        color: white;
+        padding: 2rem;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        color: white;
+      }
+
+      .hero p {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        color: white;
+      }
+
+      .cta-button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        font-size: 1.2rem;
+        text-decoration: none;
+        color: #fff;
+        background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+        border-radius: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-shadow: none;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+      }
+
+      :root {
+        --primary-color: #00ff9d;
+        --secondary-color: #6c63ff;
+        --background-dark: #0a0a0a;
+        --background-light: #1a1a1a;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background-dark);
+        color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* Navbar Styles */
+      .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 1rem 2rem;
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      .navbar.scrolled {
+        background: rgba(10, 10, 10, 0.95);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .navbar-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .navbar-links a {
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .navbar-links a:hover {
+        color: var(--primary-color);
+      }
+
+      .btn-login,
+      .btn-signup {
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-login {
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .btn-signup {
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        background: var(--primary-color);
+        color: black;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-signup:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 255, 157, 0.3);
+        background: #00cc7d;
+        color: black;
+      }
+
+      .menu-toggle {
+        display: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* Hero Section */
+      .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-content {
+        text-align: center;
+        z-index: 1;
+        padding: 2rem;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(
+          45deg,
+          var(--secondary-color),
+          var(--primary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+      }
+
+      .cta-button {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: var(--primary-color);
+        color: black;
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-3px);
+        background: #00cc7d;
+        color: black;
+      }
+
+      .city-skyline {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 30%;
+        background: linear-gradient(
+          to top,
+          var(--background-dark),
+          transparent
+        );
+        z-index: 0;
+      }
+
+      /* Section Styles */
+      .section {
+        padding: 5rem 2rem;
+        position: relative;
+      }
+
+      .section h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        color: var(--text-primary);
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .stat-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-card i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      /* Steps Container */
+      .steps-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .step-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+      }
+
+      .step-number {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: var(--background-dark);
+      }
+
+      /* User Types Grid */
+      .user-types-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .user-type-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .user-type-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .user-type-card i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--background-light);
+        padding: 4rem 2rem 2rem;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-section h4 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .footer-section a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+      }
+
+      .footer-section a:hover {
+        color: var(--primary-color);
+      }
+
+      .footer-bottom {
+        text-align: center;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--glass-border);
+      }
+
+      /* Animations */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .navbar-links {
+          display: none;
+        }
+
+        .menu-toggle {
+          display: block;
+        }
+
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .section {
+          padding: 3rem 1rem;
+        }
+
+        .stats-grid,
+        .steps-container,
+        .user-types-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        position: fixed;
+        left: -250px;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+        background: var(--background-light);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        transition: left 0.3s ease;
+        z-index: 1001;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .sidebar-links a {
+        color: var(--text-primary);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+
+      .sidebar-links a:hover {
+        background: var(--glass-bg);
+      }
+
+      /* Dashboard Specific Styles */
+      .dashboard-container {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        min-height: 100vh;
+      }
+
+      .dashboard-content {
+        padding: 2rem;
+        margin-left: 250px;
+      }
+
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      /* Auth Pages (Login & Signup) */
+      .auth-container {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background-color: var(--background-dark);
+      }
+
+      .auth-box {
+        background: rgba(26, 26, 26, 0.6);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        margin-top: 50px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: var(--card-shadow);
+      }
+
+      .auth-box h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+        text-align: center;
+      }
+
+      .auth-box p {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .auth-form .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .auth-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .auth-form input[type="text"],
+      .auth-form input[type="email"],
+      .auth-form input[type="password"] {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .auth-form input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.1);
+      }
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        color: var(--text-secondary);
+      }
+
+      .checkbox-container input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary-color);
+      }
+
+      .forgot-password {
+        float: right;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+      }
+
+      .forgot-password:hover {
+        color: #00cc7d;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 1rem;
+        background: var(--primary-color);
+        color: black;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background: #00cc7d;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 255, 157, 0.2);
+      }
+
+      .auth-footer {
+        margin-top: 2rem;
+        text-align: center;
+        color: var(--text-secondary);
+      }
+
+      .auth-footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .auth-footer a:hover {
+        color: #00cc7d;
+      }
+
+      /* Select Wrapper Styles */
+      .select-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      .select-wrapper select {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        appearance: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 2.5rem; /* Space for the arrow */
+      }
+
+      .select-wrapper::after {
+        content: "\f078"; /* FontAwesome chevron down icon */
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        pointer-events: none;
+        transition: transform 0.3s ease;
+      }
+
+      .select-wrapper:hover::after {
+        color: #00cc7d;
+      }
+
+      .select-wrapper select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.1);
+      }
+
+      .select-wrapper select:focus + .select-wrapper::after {
+        transform: translateY(-50%) rotate(180deg);
+      }
+
+      .select-wrapper select option {
+        background: var(--background-dark);
+        color: var(--text-primary);
+        padding: 1rem;
+      }
+
+      .select-wrapper select option:checked,
+      .select-wrapper select option:hover {
+        background: var(--primary-color);
+        color: black;
+      }
+
+      .select-wrapper select:hover {
+        border-color: var(--primary-color);
+      }
+
+      /* Remove old role selection styles */
+      .role-selection {
+        display: none;
+      }
+
+      .role-card {
+        display: none;
+      }
+
+      /* Terms Checkbox */
+      .terms {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .terms input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary-color);
+      }
+
+      .terms a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .terms a:hover {
+        text-decoration: underline;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .form-container {
+          margin: 100px 1rem 2rem;
+          padding: 2rem;
+        }
+
+        .form-container h2 {
+          font-size: 2rem;
+        }
+
+        .form-options {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: flex-start;
+        }
+
+        .forgot-password {
+          margin-left: 0;
+        }
+      }
+
+      /* Theme Toggle */
+      .theme-toggle {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 50px;
+        height: 50px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0, 255, 157, 0.3);
+        transition: transform 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        transform: scale(1.1);
+      }
+
+      /* Navbar Buttons */
+      .navbar-links .btn-signup,
+      .btn-signup,
+      a.btn-signup {
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        background: var(--primary-color);
+        color: black !important;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+      }
+
+      .navbar-links .btn-signup:hover,
+      .btn-signup:hover,
+      a.btn-signup:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 255, 157, 0.3);
+        background: #00cc7d;
+        color: black !important;
+      }
+
+      /* Form Submit Button */
+      .btn-submit,
+      button.btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: var(--primary-color);
+        color: black !important;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .btn-submit:hover,
+      button.btn-submit:hover {
+        background: #00cc7d;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 255, 157, 0.2);
+        color: black !important;
+      }
+      iframe{
+          height:100vh;
+          width:100vw;
+          position: absolute;
+          border: none;
+          /* z-index: 3; */
+      }
+    </style>
+  </head>
+  <body>
+    {% block content %}
+   
+    <!-- <iframe src='https://my.spline.design/photorealearth-493dd3df3d56c66ccede60ba72473db2/' frameborder='0' width='100%' height='100%'></iframe> -->
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <i class="fas fa-city"></i>
+        <span>SmartCity</span>
+      </div>
+      <div class="navbar-links">
+        <a href="#overview">Overview</a>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#user-types">User Types</a>
+        <a href="{% url 'login' %}" class="btn-login">Login</a>
+        <a href="{% url 'signup' %}" class="btn-signup">Sign Up</a>
+      </div>
+      <div class="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+    <iframe src='https://my.spline.design/unchained-5c751616aa18cd5783265a217dadee5b/'></iframe>
+      <div class="hero-content">
+        <h1>Welcome to the Future of Urban Living</h1>
+        <p>Experience the power of smart city technology at your fingertips</p>
+        <a href="{% url 'login' %}" class="cta-button">Get Started</a>
+      </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="section">
+      <h2>City Overview</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-users"></i>
+          <h3>Population</h3>
+          <p class="stat-value" data-target="500000">0</p>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-car"></i>
+          <h3>Traffic Flow</h3>
+          <p class="stat-value" data-target="85">0</p>
+          <span>%</span>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-leaf"></i>
+          <h3>Air Quality</h3>
+          <p class="stat-value" data-target="92">0</p>
+          <span>AQI</span>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-bolt"></i>
+          <h3>Energy Usage</h3>
+          <p class="stat-value" data-target="78">0</p>
+          <span>%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="section">
+      <h2>How It Works</h2>
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <i class="fas fa-user-plus"></i>
+          <h3>Create Account</h3>
+          <p>Sign up and select your role in the smart city ecosystem</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <i class="fas fa-tachometer-alt"></i>
+          <h3>Access Dashboard</h3>
+          <p>Get personalized insights and controls based on your role</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <i class="fas fa-chart-line"></i>
+          <h3>Monitor & Interact</h3>
+          <p>Track city metrics and contribute to urban development</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Types Section -->
+    <section id="user-types" class="section">
+      <h2>User Types</h2>
+      <div class="user-types-grid">
+        <div class="user-type-card">
+          <i class="fas fa-user"></i>
+          <h3>Citizens</h3>
+          <p>Access city services, report issues, and stay informed</p>
+        </div>
+        <div class="user-type-card">
+            <i class="fas fa-store"></i>
+          <h3>Government Officials</h3>
+          <p>Monitor city metrics and manage public services</p>
+        </div>
+        <div class="user-type-card">
+          <i class="fas fa-tools"></i>
+          <h3>Service Providers</h3>
+          <p>Handle service requests and maintenance tasks</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>SmartCity</h4>
+          <p>Building the future of urban living</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <a href="#overview">Overview</a>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#user-types">User Types</a>
+        </div>
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p>Email: info@smartcity.com</p>
+          <p>Phone: (555) 123-4567</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 SmartCity. All rights reserved.</p>
+      </div>
+    </footer>
+    {% endblock content %}
+
+    <!-- <script src="js/script.js"></script> -->
+  </body>
+</html>

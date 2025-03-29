@@ -1,0 +1,387 @@
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+</head>
+<style>
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #2ecc71;
+        --text-color: #333;
+        --background-color: #f4f6f7;
+        --card-background: #ffffff;
+        --border-color: #e0e4e8;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        display: flex;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+        width: 250px;
+        background-color: var(--primary-color);
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        transition: transform 0.3s ease;
+        color: white;
+        padding: 20px 0;
+    }
+
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        margin-bottom: 30px;
+        color: white;
+    }
+
+    .sidebar-header i {
+        margin-right: 10px;
+        font-size: 24px;
+    }
+
+    .sidebar-links {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-links a {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        text-decoration: none;
+        color: rgba(255,255,255,0.7);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .sidebar-links a i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .sidebar-links a:hover,
+    .sidebar-links a.active {
+        background-color: rgba(255,255,255,0.1);
+        color: white;
+    }
+
+    /* Main Content */
+    .dashboard-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        padding: 20px;
+        transition: margin-left 0.3s ease;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    /* Calendar Container */
+    .calendar-container {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    #calendar {
+        margin-top: 20px;
+    }
+
+    /* Event Modal */
+    .event-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: var(--card-background);
+        width: 90%;
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+        background-color: var(--secondary-color);
+        color: white;
+        box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-secondary {
+        background-color: #95a5a6;
+        color: white;
+        box-shadow: 0 2px 4px rgba(149, 165, 166, 0.2);
+    }
+
+    .btn-secondary:hover {
+        background-color: #7f8c8d;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(149, 165, 166, 0.3);
+    }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+        box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+    }
+
+    .btn-danger:hover {
+        background-color: #c0392b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            width: 250px;
+            z-index: 1000;
+        }
+
+        .dashboard-content {
+            margin-left: 0;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .menu-toggle {
+            display: block;
+        }
+    }
+</style>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-city"></i>
+            <span>SmartCity</span>
+        </div>
+        <nav class="sidebar-links">
+            <a href="{% url 'government_dashboard' %}">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'schedule_dashboard' %}" class="active">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Schedule</span>
+            </a>
+            <a href="{% url 'equipment_dashboard' %}">
+                <i class="fas fa-tools"></i>
+                <span>Equipment</span>
+            </a>
+            <a href="{% url 'performance_dashboard' %}">
+                <i class="fas fa-chart-bar"></i>
+                <span>Performance</span>
+            </a>
+            <a href="{% url 'settings_dashboard' %}">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a href="{% url 'logout' %}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Schedule</h1>
+            </div>
+            <button class="btn btn-primary" onclick="openEventModal()">
+                <i class="fas fa-plus"></i> Add Event
+            </button>
+        </header>
+
+        <div class="calendar-container">
+            <div id="calendar"></div>
+        </div>
+    </main>
+
+    <!-- Event Modal -->
+    <div id="eventModal" class="event-modal">
+        <div class="modal-content">
+            <h2>Add New Event</h2>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventStart">Start Date & Time</label>
+                    <input type="datetime-local" id="eventStart" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventEnd">End Date & Time</label>
+                    <input type="datetime-local" id="eventEnd" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Save Event</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEventModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize FullCalendar
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [
+                    {
+                        title: 'Team Meeting',
+                        start: '2024-03-20T10:00:00',
+                        end: '2024-03-20T11:00:00'
+                    },
+                    {
+                        title: 'Project Review',
+                        start: '2024-03-22T14:00:00',
+                        end: '2024-03-22T15:30:00'
+                    }
+                ],
+                editable: true,
+                selectable: true,
+                select: function(info) {
+                    openEventModal();
+                }
+            });
+            calendar.render();
+
+            // Mobile menu toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            menuToggle.addEventListener('click', function() {
+                sidebar.style.transform = sidebar.style.transform === 'translateX(0)' ? 'translateX(-100%)' : 'translateX(0)';
+            });
+
+            // Event form submission
+            document.getElementById('eventForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const title = document.getElementById('eventTitle').value;
+                const start = document.getElementById('eventStart').value;
+                const end = document.getElementById('eventEnd').value;
+                const description = document.getElementById('eventDescription').value;
+
+                calendar.addEvent({
+                    title: title,
+                    start: start,
+                    end: end,
+                    description: description
+                });
+
+                closeEventModal();
+                this.reset();
+            });
+        });
+
+        function openEventModal() {
+            document.getElementById('eventModal').style.display = 'block';
+        }
+
+        function closeEventModal() {
+            document.getElementById('eventModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target === modal) {
+                closeEventModal();
+            }
+        }
+    </script>
+</body>

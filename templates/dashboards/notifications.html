@@ -1,0 +1,314 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Smart City Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #66bb6a;
+            --secondary-color: #42a5f5;
+            --background-color: #1a1a1a;
+            --text-color: #ffffff;
+            --card-bg: #2d2d2d;
+            --border-color: #404040;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .notifications-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .notifications-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .notification-filters {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .notification-item {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .notification-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .notification-icon.alert {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+
+        .notification-icon.info {
+            background-color: #e3f2fd;
+            color: #2196F3;
+        }
+
+        .notification-icon.success {
+            background-color: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-message {
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-time {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.6;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .notifications-container {
+                margin: 1rem auto;
+            }
+
+            .notifications-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .notification-filters {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .filter-btn {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notifications-container">
+        <div class="notifications-header">
+            <h1 class="notifications-title">Notifications</h1>
+            <div class="notification-filters">
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">Alerts</button>
+                <button class="filter-btn">Updates</button>
+                <button class="filter-btn">Events</button>
+            </div>
+        </div>
+
+        <div class="notification-list">
+            <!-- Sample Notifications -->
+            <div class="notification-item">
+                <div class="notification-icon alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <h3 class="notification-title">Traffic Alert</h3>
+                    <p class="notification-message">Heavy traffic reported on Western Express Highway. Consider alternative routes.</p>
+                    <span class="notification-time">2 minutes ago</span>
+                    <div class="notification-actions">
+                        <button class="action-btn" title="Mark as read">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="action-btn" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-icon info">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <h3 class="notification-title">System Update</h3>
+                    <p class="notification-message">New features added to the dashboard. Check out the updated interface.</p>
+                    <span class="notification-time">1 hour ago</span>
+                    <div class="notification-actions">
+                        <button class="action-btn" title="Mark as read">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="action-btn" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <h3 class="notification-title">Complaint Resolved</h3>
+                    <p class="notification-message">Your complaint regarding street lighting has been resolved.</p>
+                    <span class="notification-time">2 hours ago</span>
+                    <div class="notification-actions">
+                        <button class="action-btn" title="Mark as read">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="action-btn" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Functionality
+        function initializeThemeToggle() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        }
+
+        // Notification Filter Functionality
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                // Add filter logic here
+            });
+        });
+
+        // Mark as Read Functionality
+        document.querySelectorAll('.action-btn[title="Mark as read"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const notificationItem = this.closest('.notification-item');
+                notificationItem.style.opacity = '0.7';
+                // Add mark as read logic here
+            });
+        });
+
+        // Delete Notification Functionality
+        document.querySelectorAll('.action-btn[title="Delete"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const notificationItem = this.closest('.notification-item');
+                notificationItem.style.display = 'none';
+                // Add delete logic here
+            });
+        });
+
+        // Initialize theme
+        document.addEventListener('DOMContentLoaded', initializeThemeToggle);
+    </script>
+</body>
+</html> 

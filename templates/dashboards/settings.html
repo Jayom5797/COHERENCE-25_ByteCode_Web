@@ -1,0 +1,454 @@
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<style>
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #2ecc71;
+        --text-color: #333;
+        --background-color: #f4f6f7;
+        --card-background: #ffffff;
+        --border-color: #e0e4e8;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        display: flex;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+        width: 250px;
+        background-color: var(--primary-color);
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        transition: transform 0.3s ease;
+        color: white;
+        padding: 20px 0;
+    }
+
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        margin-bottom: 30px;
+        color: white;
+    }
+
+    .sidebar-header i {
+        margin-right: 10px;
+        font-size: 24px;
+    }
+
+    .sidebar-links {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-links a {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        text-decoration: none;
+        color: rgba(255,255,255,0.7);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .sidebar-links a i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .sidebar-links a:hover,
+    .sidebar-links a.active {
+        background-color: rgba(255,255,255,0.1);
+        color: white;
+    }
+
+    /* Main Content */
+    .dashboard-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        padding: 20px;
+        transition: margin-left 0.3s ease;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    /* Settings Content */
+    .settings-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .settings-section {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header i {
+        margin-right: 10px;
+        color: var(--secondary-color);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: var(--card-background);
+    }
+
+    .form-group textarea {
+        height: 100px;
+        resize: vertical;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+        background-color: var(--secondary-color);
+        color: white;
+        box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-secondary {
+        background-color: #95a5a6;
+        color: white;
+        box-shadow: 0 2px 4px rgba(149, 165, 166, 0.2);
+    }
+
+    .btn-secondary:hover {
+        background-color: #7f8c8d;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(149, 165, 166, 0.3);
+    }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+        box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+    }
+
+    .btn-danger:hover {
+        background-color: #c0392b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            width: 250px;
+            z-index: 1000;
+        }
+
+        .dashboard-content {
+            margin-left: 0;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .menu-toggle {
+            display: block;
+        }
+    }
+</style>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-city"></i>
+            <span>SmartCity</span>
+        </div>
+        <nav class="sidebar-links">
+            <a href="{% url 'government_dashboard' %}">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'schedule_dashboard' %}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Schedule</span>
+            </a>
+            <a href="{% url 'equipment_dashboard' %}">
+                <i class="fas fa-tools"></i>
+                <span>Equipment</span>
+            </a>
+            <a href="{% url 'performance_dashboard' %}">
+                <i class="fas fa-chart-bar"></i>
+                <span>Performance</span>
+            </a>
+            <a href="{% url 'settings_dashboard' %}" class="active">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a href="{% url 'logout' %}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Settings</h1>
+            </div>
+        </header>
+
+        <div class="settings-container">
+            <!-- Profile Settings -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-user"></i>
+                    <h2>Profile Settings</h2>
+                </div>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" value="{{ user.first_name }} {{ user.last_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" value="{{ user.email }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" value="{{ user.phone_number }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department">
+                            <option value="operations">Operations</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="administration">Administration</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Profile</button>
+                </form>
+            </section>
+
+            <!-- Notification Settings -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-bell"></i>
+                    <h2>Notification Settings</h2>
+                </div>
+                <form id="notificationForm">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="emailNotifications" checked>
+                        <label for="emailNotifications">Email Notifications</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="smsNotifications">
+                        <label for="smsNotifications">SMS Notifications</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="taskUpdates" checked>
+                        <label for="taskUpdates">Task Updates</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="maintenanceAlerts" checked>
+                        <label for="maintenanceAlerts">Maintenance Alerts</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Notification Settings</button>
+                </form>
+            </section>
+
+            <!-- Security Settings -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-shield-alt"></i>
+                    <h2>Security Settings</h2>
+                </div>
+                <form id="securityForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword">
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="twoFactorAuth">
+                        <label for="twoFactorAuth">Enable Two-Factor Authentication</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Security Settings</button>
+                </form>
+            </section>
+
+            <!-- System Preferences -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-desktop"></i>
+                    <h2>System Preferences</h2>
+                </div>
+                <form id="preferencesForm">
+                    <div class="form-group">
+                        <label for="language">Language</label>
+                        <select id="language">
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="timezone">Timezone</label>
+                        <select id="timezone">
+                            <option value="utc">UTC + 5:30</option>
+                            <option value="est">Eastern Time</option>
+                            <option value="pst">Pacific Time</option>
+                        </select>
+                    </div>
+                    <!-- <div class="checkbox-group">
+                        <input type="checkbox" id="darkMode">
+                        <label for="darkMode">Dark Mode</label>
+                    </div> -->
+                    <button type="submit" class="btn btn-primary">Save Preferences</button>
+                </form>
+            </section>
+
+            <!-- Danger Zone -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>Danger Zone</h2>
+                </div>
+                <div class="form-group">
+                    <p>Once you delete your account, there is no going back. Please be certain.</p>
+                    <button type="button" class="btn btn-danger">Delete Account</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            menuToggle.addEventListener('click', function() {
+                sidebar.style.transform = sidebar.style.transform === 'translateX(0)' ? 'translateX(-100%)' : 'translateX(0)';
+            });
+
+            // Form submissions
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Profile settings saved successfully!');
+            });
+
+            document.getElementById('notificationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Notification settings saved successfully!');
+            });
+
+            document.getElementById('securityForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Security settings updated successfully!');
+            });
+
+            document.getElementById('preferencesForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('System preferences saved successfully!');
+            });
+
+            // Dark mode toggle
+            const darkModeToggle = document.getElementById('darkMode');
+            darkModeToggle.addEventListener('change', function() {
+                document.body.classList.toggle('dark-mode');
+            });
+        });
+    </script>
+</body>

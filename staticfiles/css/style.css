@@ -1,0 +1,151 @@
+/* AQI Section Styles */
+.aqi-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.aqi-section.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.aqi-section.error {
+    border: 1px solid #ff4444;
+}
+
+.aqi-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.aqi-section h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.aqi-value {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.aqi-value .value {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.aqi-value .unit {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.aqi-status {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.aqi-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.aqi-metric {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.metric-value {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+/* AQI Status Colors */
+.aqi-good {
+    background-color: #e8f5e9;
+}
+
+.aqi-good .aqi-status {
+    background-color: #4caf50;
+    color: white;
+}
+
+.aqi-moderate {
+    background-color: #fff3e0;
+}
+
+.aqi-moderate .aqi-status {
+    background-color: #ff9800;
+    color: white;
+}
+
+.aqi-unhealthy-sensitivity {
+    background-color: #fff8e1;
+}
+
+.aqi-unhealthy-sensitivity .aqi-status {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.aqi-unhealthy {
+    background-color: #ffebee;
+}
+
+.aqi-unhealthy .aqi-status {
+    background-color: #f44336;
+    color: white;
+}
+
+.aqi-very-unhealthy {
+    background-color: #f3e5f5;
+}
+
+.aqi-very-unhealthy .aqi-status {
+    background-color: #9c27b0;
+    color: white;
+}
+
+.aqi-hazardous {
+    background-color: #e8eaf6;
+}
+
+.aqi-hazardous .aqi-status {
+    background-color: #3f51b5;
+    color: white;
+}
+
+/* Loading Animation */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.aqi-section.loading .aqi-value,
+.aqi-section.loading .aqi-status,
+.aqi-section.loading .aqi-metrics {
+    animation: pulse 1.5s infinite;
+} 

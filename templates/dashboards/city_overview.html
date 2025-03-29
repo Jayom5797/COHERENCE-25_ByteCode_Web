@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Overview - Smart City</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --card-bg: #ffffff;
+            --hover-bg: #f5f5f5;
+        }
+
+        body {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 20px;
+        }
+
+        /* City Overview Styles */
+        .grid-item {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background-color: var(--hover-bg);
+            color: var(--primary-color);
+        }
+
+        /* 3D Map Styles */
+        #mumbai3DMap {
+            height: 300px;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .map-controls-3d {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+            background: var(--card-bg);
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        .map-control-btn-3d {
+            background: none;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            background-color: var(--bg-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            margin: 2px;
+        }
+
+        .map-control-btn-3d:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* City Stats */
+        .city-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .stat i {
+            color: var(--primary-color);
+        }
+
+        /* Water Stats */
+        .water-stats {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            margin-top: 5%;
+            height: 10%;
+        }
+
+        .water-stat {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .water-stat i {
+            color: var(--primary-color);
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --primary-color: #66bb6a;
+            --secondary-color: #42a5f5;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --border-color: #404040;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --card-bg: #2d2d2d;
+            --hover-bg: #404040;
+        }
+
+        [data-theme="dark"] .stat,
+        [data-theme="dark"] .water-stat {
+            background-color: var(--bg-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- City Overview -->
+    <div class="grid-item city-overview">
+        <div class="section-header">
+            <h2>City Overview</h2>
+            <div class="section-actions">
+                <button class="btn-icon" id="toggle3D">
+                    <i class="fas fa-cube"></i>
+                </button>
+                <button class="btn-icon" id="resetView">
+                    <i class="fas fa-sync"></i>
+                </button>
+            </div>
+        </div>
+        <div class="city-skyline" id="mumbai3DMap">
+            <!-- Map will be initialized here -->
+        </div>
+        <div class="city-stats">
+            <div class="stat">
+                <i class="fas fa-users"></i>
+                <span>Population: <span id="population">Loading...</span></span>
+            </div>
+            <div class="stat">
+                <i class="fas fa-tree"></i>
+                <span>Green Coverage: <span id="greenCoverage">Loading...</span></span>
+            </div>
+            <div class="stat">
+                <i class="fas fa-solar-panel"></i>
+                <span>Solar Energy: <span id="solarEnergy">Loading...</span></span>
+            </div>
+        </div>
+        <div class="water-stats">
+            <div class="water-stat">
+                <i class='bx bx-water'></i>
+                <span>Water Level:</span>
+                <div id="water-level">25feet</div>
+            </div>
+            <div class="water-stat" style="margin-left: 2%;">
+                <i class='bx bx-stopwatch' style="font-size: 20px;"></i>
+                <span>Water Pressure: <span id="water-level-pressure">25%</span></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize map
+        let mumbaiMap;
+        let is3DMode = false;
+
+        function initMap() {
+            try {
+                // Vasai West coordinates
+                const vasaiWest = { lat: 19.3917, lng: 72.8397 };
+                
+                const mumbai3DMapOptions = {
+                    center: vasaiWest,
+                    zoom: 14,
+                    mapTypeId: 'roadmap',
+                    tilt: 0,
+                    mapTypeControl: true,
+                    mapTypeControlOptions: {
+                        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                        mapTypeIds: ['roadmap', 'satellite', 'hybrid']
+                    },
+                    streetViewControl: true,
+                    fullscreenControl: false,
+                    backgroundColor: '#ffffff',
+                    styles: [
+                        {
+                            "featureType": "all",
+                            "elementType": "geometry",
+                            "stylers": [{"color": "#f5f5f5"}]
+                        },
+                        {
+                            "featureType": "all",
+                            "elementType": "labels.text.stroke",
+                            "stylers": [{"lightness": -80}]
+                        },
+                        {
+                            "featureType": "administrative",
+                            "elementType": "labels.text.fill",
+                            "stylers": [{"color": "#666666"}]
+                        },
+                        {
+                            "featureType": "road",
+                            "elementType": "geometry",
+                            "stylers": [{"color": "#ffffff"}]
+                        },
+                        {
+                            "featureType": "road",
+                            "elementType": "labels.text.fill",
+                            "stylers": [{"color": "#666666"}]
+                        },
+                        {
+                            "featureType": "road.highway",
+                            "elementType": "geometry",
+                            "stylers": [{"color": "#dadada"}]
+                        },
+                        {
+                            "featureType": "road.highway",
+                            "elementType": "labels.text.fill",
+                            "stylers": [{"color": "#666666"}]
+                        },
+                        {
+                            "featureType": "water",
+                            "elementType": "geometry",
+                            "stylers": [{"color": "#c9c9c9"}]
+                        },
+                        {
+                            "featureType": "water",
+                            "elementType": "labels.text.fill",
+                            "stylers": [{"color": "#9e9e9e"}]
+                        },
+                        {
+                            "featureType": "all",
+                            "elementType": "labels.text",
+                            "stylers": [
+                                {"fontWeight": "normal"},
+                                {"fontSize": "12px"}
+                            ]
+                        }
+                    ]
+                };
+
+                const mumbai3DMapContainer = document.getElementById('mumbai3DMap');
+                if (!mumbai3DMapContainer) {
+                    throw new Error('3D map container not found');
+                }
+
+                mumbaiMap = new google.maps.Map(mumbai3DMapContainer, mumbai3DMapOptions);
+                console.log('Map initialized successfully');
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                const mumbai3DMapContainer = document.getElementById('mumbai3DMap');
+                if (mumbai3DMapContainer) {
+                    mumbai3DMapContainer.innerHTML = `
+                        <div style="color: red; text-align: center; padding: 20px;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>Error loading map. Please check your API key and try again.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function toggle3DView() {
+            if (!mumbaiMap) return;
+            try {
+                is3DMode = !is3DMode;
+                mumbaiMap.setTilt(is3DMode ? 45 : 0);
+                document.getElementById('toggle3D').classList.toggle('active');
+            } catch (error) {
+                console.error('Error toggling 3D view:', error);
+            }
+        }
+
+        function resetMapView() {
+            if (!mumbaiMap) return;
+            try {
+                mumbaiMap.setCenter({ lat: 19.3917, lng: 72.8397 });
+                mumbaiMap.setZoom(14);
+                mumbaiMap.setTilt(0);
+                is3DMode = false;
+                document.getElementById('toggle3D').classList.remove('active');
+            } catch (error) {
+                console.error('Error resetting map view:', error);
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('toggle3D').addEventListener('click', toggle3DView);
+        document.getElementById('resetView').addEventListener('click', resetMapView);
+
+        // City Overview Data
+        function updateCityOverview() {
+            // Update population
+            document.getElementById('population').textContent = "12.5M";
+
+            // Update green coverage (simulated data)
+            const greenCoverage = calculateGreenCoverage();
+            document.getElementById('greenCoverage').textContent = greenCoverage;
+
+            // Update solar energy (simulated data)
+            const solarEnergy = calculateSolarEnergy();
+            document.getElementById('solarEnergy').textContent = solarEnergy;
+
+            // Update water level and pressure (simulated data)
+            document.getElementById('water-level').textContent = "25 feet";
+            document.getElementById('water-level-pressure').textContent = "25%";
+        }
+
+        function calculateGreenCoverage() {
+            const month = new Date().getMonth();
+            let baseCoverage = 35; // Default coverage
+            
+            // Adjust based on season
+            if (month >= 6 && month <= 9) {
+                baseCoverage += 5; // Monsoon season
+            } else if (month >= 10 && month <= 1) {
+                baseCoverage -= 2; // Winter season
+            }
+            
+            return Math.round(baseCoverage) + '%';
+        }
+
+        function calculateSolarEnergy() {
+            const hour = new Date().getHours();
+            let solarEnergy = 0;
+            
+            if (hour >= 10 && hour <= 16) {
+                solarEnergy = 85; // Peak hours
+            } else if (hour >= 6 && hour < 10) {
+                solarEnergy = 45; // Morning hours
+            } else if (hour > 16 && hour <= 20) {
+                solarEnergy = 25; // Evening hours
+            }
+            
+            return solarEnergy + '%';
+        }
+
+        // Initialize data
+        updateCityOverview();
+        setInterval(updateCityOverview, 300000); // Update every 5 minutes
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNN7lTqz0toubEJniwu1rRjhAHEUcelP4&libraries=places&callback=initMap"></script>
+</body>
+</html> 

@@ -1,0 +1,331 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News - Smart City Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #66bb6a;
+            --secondary-color: #42a5f5;
+            --background-color: #1a1a1a;
+            --text-color: #ffffff;
+            --card-bg: #2d2d2d;
+            --border-color: #404040;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .news-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .news-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .news-filters {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .news-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-category {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: var(--primary-color);
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .news-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .news-excerpt {
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .news-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .news-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .news-container {
+                margin: 1rem auto;
+            }
+
+            .news-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .news-filters {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .filter-btn {
+                white-space: nowrap;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="news-container">
+        <div class="news-header">
+            <h1 class="news-title">City News</h1>
+            <div class="news-filters">
+                <button class="filter-btn active">All News</button>
+                <button class="filter-btn">Updates</button>
+                <button class="filter-btn">Announcements</button>
+                <button class="filter-btn">Events</button>
+            </div>
+        </div>
+
+        <div class="news-grid">
+            <!-- Sample News Items -->
+            <div class="news-card">
+                <img src="https://source.unsplash.com/random/400x300?city" alt="Smart City Initiative" class="news-image">
+                <div class="news-content">
+                    <span class="news-category">Updates</span>
+                    <h3 class="news-title">New Smart City Initiatives Launched</h3>
+                    <p class="news-excerpt">The city administration has launched new smart city initiatives focusing on sustainable development and digital transformation.</p>
+                    <div class="news-meta">
+                        <div class="news-date">
+                            <i class="fas fa-calendar"></i>
+                            <span>Dec 25, 2024</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="action-btn" title="Share">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="action-btn" title="Bookmark">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="news-card">
+                <img src="https://source.unsplash.com/random/400x300?transport" alt="Transport Update" class="news-image">
+                <div class="news-content">
+                    <span class="news-category">Announcements</span>
+                    <h3 class="news-title">Public Transport System Upgrade</h3>
+                    <p class="news-excerpt">Major upgrades to the public transport system announced, including new routes and improved connectivity.</p>
+                    <div class="news-meta">
+                        <div class="news-date">
+                            <i class="fas fa-calendar"></i>
+                            <span>Dec 20, 2024</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="action-btn" title="Share">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="action-btn" title="Bookmark">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="news-card">
+                <img src="https://source.unsplash.com/random/400x300?environment" alt="Environmental Initiative" class="news-image">
+                <div class="news-content">
+                    <span class="news-category">Events</span>
+                    <h3 class="news-title">Environmental Protection Drive</h3>
+                    <p class="news-excerpt">City launches new environmental protection initiatives to combat pollution and promote sustainability.</p>
+                    <div class="news-meta">
+                        <div class="news-date">
+                            <i class="fas fa-calendar"></i>
+                            <span>Dec 15, 2024</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="action-btn" title="Share">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="action-btn" title="Bookmark">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Functionality
+        function initializeThemeToggle() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        }
+
+        // News Filter Functionality
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                // Add filter logic here
+            });
+        });
+
+        // Share Functionality
+        document.querySelectorAll('.action-btn[title="Share"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const newsTitle = this.closest('.news-card').querySelector('.news-title').textContent;
+                alert(`Sharing "${newsTitle}"...`);
+                // Add share logic here
+            });
+        });
+
+        // Bookmark Functionality
+        document.querySelectorAll('.action-btn[title="Bookmark"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const newsTitle = this.closest('.news-card').querySelector('.news-title').textContent;
+                alert(`Bookmarked "${newsTitle}"`);
+                // Add bookmark logic here
+            });
+        });
+
+        // Initialize theme
+        document.addEventListener('DOMContentLoaded', initializeThemeToggle);
+    </script>
+</body>
+</html> 
