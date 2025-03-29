@@ -7,13 +7,16 @@ let transitLayer;
 let directionsService;
 let directionsRenderer;
 let mumbaiCenter = { lat: 19.0760, lng: 72.8777 };
+let chargingPointsLayer = null;
+let chargingPointsMarkers = [];
 let keyLocations = {
     airport: { lat: 19.0896, lng: 72.8656, name: 'Chhatrapati Shivaji International Airport' },
     downtown: { lat: 19.0760, lng: 72.8777, name: 'Downtown Mumbai' },
     port: { lat: 18.9322, lng: 72.8347, name: 'Mumbai Port' }
 };
 
-function initMap() {
+// Make initMap function globally available
+window.initializeMaps = function() {
     try {
         console.log('Starting map initialization...');
         
@@ -95,7 +98,7 @@ function initMap() {
     } catch (error) {
         console.error('Error initializing maps:', error);
     }
-}
+};
 
 // Add new function for 3D controls
 function setup3DControls() {
@@ -107,82 +110,33 @@ function setup3DControls() {
             return;
         }
 
-        // Create control container
-        const controlsContainer = document.createElement('div');
-        controlsContainer.className = 'map-controls';
-        controlsContainer.style.cssText = `
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: white;
-            padding: 5px;
-            border-radius: 4px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        `;
+        // Get the existing toggle3D button from the DOM
+        const toggle3DButton = document.getElementById('toggle3D');
+        const resetViewButton = document.getElementById('resetView');
 
-        // Add 3D toggle button
-        // const toggle3DButton = document.createElement('button');
-        // toggle3DButton.innerHTML = '<i class="fas fa-cube"></i> 3D View';
-        // toggle3DButton.className = 'map-control-button';
-        // toggle3DButton.style.cssText = `
-        //     padding: 8px 12px;
-        //     margin: 0 5px;
-        //     border: none;
-        //     border-radius: 4px;
-        //     background: #fff;
-        //     cursor: pointer;
-        //     font-size: 14px;
-        //     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        // `;
+        if (!toggle3DButton || !resetViewButton) {
+            console.error('3D control buttons not found in DOM');
+            return;
+        }
 
-        // Add satellite toggle button
-        // const toggleSatelliteButton = document.createElement('button');
-        // toggleSatelliteButton.innerHTML = '<i class="fas fa-satellite"></i> Satellite';
-        // toggleSatelliteButton.className = 'map-control-button';
-        // toggleSatelliteButton.style.cssText = toggle3DButton.style.cssText;
-
-        // Add buttons to container
-        controlsContainer.appendChild(toggle3DButton);
-        controlsContainer.appendChild(toggleSatelliteButton);
-
-        // Add container to map
-        mumbaiMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlsContainer);
-
-        // 3D toggle functionality
+        // Add click event listeners
         toggle3DButton.addEventListener('click', function() {
             is3DMode = !is3DMode;
             if (is3DMode) {
                 mumbaiMap.setTilt(45);
-                this.style.background = '#e0e0e0';
+                this.classList.add('active');
             } else {
                 mumbaiMap.setTilt(0);
-                this.style.background = '#fff';
+                this.classList.remove('active');
             }
         });
 
-        // Satellite toggle functionality
-        toggleSatelliteButton.addEventListener('click', function() {
-            const currentMapType = mumbaiMap.getMapTypeId();
-            if (currentMapType === 'satellite') {
-                mumbaiMap.setMapTypeId('roadmap');
-                this.style.background = '#fff';
-            } else {
-                mumbaiMap.setMapTypeId('satellite');
-                this.style.background = '#e0e0e0';
-            }
-        });
-
-        // Add hover effects
-        [toggle3DButton, toggleSatelliteButton].forEach(button => {
-            button.addEventListener('mouseover', function() {
-                this.style.background = '#f0f0f0';
-            });
-            button.addEventListener('mouseout', function() {
-                if (!this.classList.contains('active')) {
-                    this.style.background = '#fff';
-                }
-            });
+        resetViewButton.addEventListener('click', function() {
+            mumbaiMap.setCenter({ lat: 19.3917, lng: 72.8397 });
+            mumbaiMap.setZoom(14);
+            mumbaiMap.setTilt(0);
+            is3DMode = false;
+            toggle3DButton.classList.remove('active');
         });
 
         console.log('3D map controls set up successfully');
@@ -538,6 +492,196 @@ function setupMapControls() {
             this.classList.add('active');
         }
     });
+
+    // Toggle EV charging points
+    document.getElementById('toggleCharging').addEventListener('click', function() {
+        if (chargingPointsLayer) {
+            clearChargingPoints();
+            this.classList.remove('active');
+        } else {
+            searchChargingPoints();
+            this.classList.add('active');
+        }
+    });
+}
+
+function searchChargingPoints() {
+    try {
+        // Use the new Places API
+        const service = new google.maps.places.PlacesService(trafficMap);
+        const request = {
+            location: trafficMap.getCenter(),
+            radius: '5000',
+            type: ['charging_station']
+        };
+
+        // First try to use the new Places API
+        if (google.maps.places.Place) {
+            const places = new google.maps.places.Place({
+                location: request.location,
+                radius: request.radius,
+                type: request.type
+            });
+
+            places.search().then(results => {
+                displayChargingPoints(results);
+            }).catch(error => {
+                console.error('Error searching for charging points:', error);
+                displayStaticChargingPoints();
+            });
+        } else {
+            // Fallback to the legacy PlacesService if the new API is not available
+            service.nearbySearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    displayChargingPoints(results);
+                } else {
+                    console.error('Error searching for charging points:', status);
+                    displayStaticChargingPoints();
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error in searchChargingPoints:', error);
+        displayStaticChargingPoints();
+    }
+}
+
+function displayChargingPoints(places) {
+    // Clear existing markers if any
+    clearChargingPoints();
+
+    // Create markers for each charging point
+    places.forEach(place => {
+        const marker = new google.maps.Marker({
+            position: place.geometry.location,
+            map: trafficMap,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: '#FF0000',
+                fillOpacity: 0.8,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2
+            },
+            title: place.name
+        });
+
+        // Add info window with place details
+        const infoWindow = new google.maps.InfoWindow({
+            content: `
+                <div style="padding: 10px;">
+                    <h3 style="margin: 0 0 5px 0;">${place.name}</h3>
+                    <p style="margin: 0;">${place.vicinity}</p>
+                    ${place.rating ? `<p style="margin: 5px 0;">Rating: ${place.rating} ⭐</p>` : ''}
+                    <button onclick="getDirections('${place.geometry.location.lat()},${place.geometry.location.lng()}')" 
+                            style="background: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                        Get Directions
+                    </button>
+                </div>
+            `
+        });
+
+        marker.addListener('click', () => {
+            infoWindow.open(trafficMap, marker);
+        });
+
+        chargingPointsMarkers.push(marker);
+    });
+
+    chargingPointsLayer = true;
+}
+
+function displayStaticChargingPoints() {
+    // Clear existing markers if any
+    clearChargingPoints();
+
+    // Static charging points data for Mumbai
+    const staticChargingPoints = [
+        {
+            name: 'Tata Power Charging Station',
+            position: { lat: 19.0760, lng: 72.8777 },
+            vicinity: 'Bandra West',
+            rating: 4.5
+        },
+        {
+            name: 'Reliance EV Charging',
+            position: { lat: 19.0896, lng: 72.8656 },
+            vicinity: 'Andheri East',
+            rating: 4.2
+        },
+        {
+            name: 'Mahindra EV Station',
+            position: { lat: 18.9322, lng: 72.8347 },
+            vicinity: 'Colaba',
+            rating: 4.0
+        }
+    ];
+
+    // Create markers for each charging point
+    staticChargingPoints.forEach(point => {
+        const marker = new google.maps.Marker({
+            position: point.position,
+            map: trafficMap,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: '#FF0000',
+                fillOpacity: 0.8,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2
+            },
+            title: point.name
+        });
+
+        // Add info window with place details
+        const infoWindow = new google.maps.InfoWindow({
+            content: `
+                <div style="padding: 10px;">
+                    <h3 style="margin: 0 0 5px 0;">${point.name}</h3>
+                    <p style="margin: 0;">${point.vicinity}</p>
+                    ${point.rating ? `<p style="margin: 5px 0;">Rating: ${point.rating} ⭐</p>` : ''}
+                    <button onclick="getDirections('${point.position.lat},${point.position.lng}')" 
+                            style="background: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                        Get Directions
+                    </button>
+                </div>
+            `
+        });
+
+        marker.addListener('click', () => {
+            infoWindow.open(trafficMap, marker);
+        });
+
+        chargingPointsMarkers.push(marker);
+    });
+
+    chargingPointsLayer = true;
+}
+
+function clearChargingPoints() {
+    chargingPointsMarkers.forEach(marker => marker.setMap(null));
+    chargingPointsMarkers = [];
+    chargingPointsLayer = null;
+}
+
+function getDirections(destination) {
+    const origin = new google.maps.LatLng(mumbaiCenter.lat, mumbaiCenter.lng);
+    const dest = destination.split(',').map(coord => parseFloat(coord));
+    const destinationLatLng = new google.maps.LatLng(dest[0], dest[1]);
+
+    const request = {
+        origin: origin,
+        destination: destinationLatLng,
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+
+    directionsService.route(request, (result, status) => {
+        if (status === 'OK') {
+            directionsRenderer.setDirections(result);
+        } else {
+            console.error('Error getting directions:', status);
+        }
+    });
 }
 
 function initializeTrafficData() {
@@ -626,7 +770,32 @@ function updateRouteInfo(result, destinationName) {
         }
     } else {
         console.warn(`Could not find route card for destination: ${destinationName}`);
+        // Create a new route card if it doesn't exist
+        createRouteCard(destinationName, trafficLevel, duration, distance);
     }
+}
+
+function createRouteCard(destinationName, trafficLevel, duration, distance) {
+    const trafficInfo = document.querySelector('.traffic-info');
+    if (!trafficInfo) return;
+
+    const routeCard = document.createElement('div');
+    routeCard.className = 'traffic-route';
+    routeCard.innerHTML = `
+        <div class="route-header">
+            <span class="route-name">${destinationName}</span>
+            <div class="traffic-status">
+                <span class="status-dot status-${trafficLevel}"></span>
+                <span>${trafficLevel.charAt(0).toUpperCase() + trafficLevel.slice(1)} Traffic</span>
+            </div>
+        </div>
+        <div class="route-details">
+            <i class="fas fa-clock"></i> ${Math.round(duration.value / 60)} mins
+            <i class="fas fa-road"></i> ${Math.round(distance.value / 1000)} km
+        </div>
+    `;
+
+    trafficInfo.appendChild(routeCard);
 }
 
 // Theme Toggle Functionality
@@ -741,13 +910,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize map when Google Maps API is loaded
     if (typeof google !== 'undefined' && google.maps) {
         console.log('Google Maps API loaded, initializing maps...');
-        initMap();
+        initializeMaps();
     } else {
         console.log('Waiting for Google Maps API to load...');
         // Wait for Google Maps API to load
-        window.initMap = function() {
+        window.initializeMaps = function() {
             console.log('Google Maps API loaded via callback, initializing maps...');
-            initMap();
+            initializeMaps();
         };
     }
-}); 
+});

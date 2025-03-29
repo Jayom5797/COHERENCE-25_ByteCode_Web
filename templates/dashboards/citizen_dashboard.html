@@ -5,10 +5,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Load Google Maps API with async and defer -->
+    <!-- Load Google Maps API -->
+    <script>
+        // Define the initialization function in the global scope
+        window.initializeMaps = function() {
+            if (typeof google !== 'undefined' && google.maps) {
+                console.log('Google Maps API loaded, initializing maps...');
+                try {
+                    // Create Traffic Map with explicit dimensions
+                    const mapOptions = {
+                        center: { lat: 19.3917, lng: 72.8397 },
+                        zoom: 14,
+                        mapTypeId: 'roadmap',
+                        mapTypeControl: false,
+                        streetViewControl: false,
+                        fullscreenControl: false,
+                        backgroundColor: '#ffffff'
+                    };
+
+                    // Initialize 3D Map for city overview with enhanced options
+                    const mumbai3DMapOptions = {
+                        center: { lat: 19.3917, lng: 72.8397 },
+                        zoom: 14,
+                        mapTypeId: 'satellite',
+                        tilt: 0,
+                        mapTypeControl: true,
+                        mapTypeControlOptions: {
+                            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                            mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain']
+                        },
+                        streetViewControl: true,
+                        fullscreenControl: false,
+                        backgroundColor: '#ffffff'
+                    };
+
+                    // Create map instances
+                    const mapContainer = document.getElementById('map');
+                    const mumbai3DMapContainer = document.getElementById('mumbai3DMap');
+                    
+                    if (mapContainer && mumbai3DMapContainer) {
+                        window.trafficMap = new google.maps.Map(mapContainer, mapOptions);
+                        window.mumbaiMap = new google.maps.Map(mumbai3DMapContainer, mumbai3DMapOptions);
+                        
+                        // Initialize other map components
+                        window.trafficLayer = new google.maps.TrafficLayer();
+                        window.transitLayer = new google.maps.TransitLayer();
+                        window.directionsService = new google.maps.DirectionsService();
+                        window.directionsRenderer = new google.maps.DirectionsRenderer({
+                            map: window.trafficMap,
+                            suppressMarkers: true
+                        });
+
+                        // Initialize map controls and data
+                        setupMapControls();
+                        initializeTrafficData();
+                        setup3DControls();
+                        updateCityOverview();
+                    }
+                } catch (error) {
+                    console.error('Error initializing maps:', error);
+                }
+            }
+        };
+
+        function initMap() {
+            window.initializeMaps();
+        }
+    </script>
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNN7lTqz0toubEJniwu1rRjhAHEUcelP4&libraries=places,geometry&callback=initMap">
     </script>
+    <!-- Load dashboard.js after Maps API -->
+    <script src="{% static 'js/dashboard.js' %}"></script>
 </head>
 <style>
     /* Reset and Base Styles */
@@ -1836,6 +1904,9 @@
                         <button class="btn-icon" id="toggleTransit" title="Toggle Transit Layer">
                             <i class="fas fa-bus"></i>
                         </button>
+                        <button class="btn-icon" id="toggleCharging" title="Toggle EV Charging Points">
+                            <i class="fas fa-charging-station"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="traffic-map">
@@ -1930,7 +2001,7 @@
             <!-- Smart Energy -->
             <div class="grid-item energy-section">
                 <div class="section-header">
-                    <h2>Smart Energy Usage</h2>
+                    <h2>Smart Energy Usage on Electric Vehicles</h2>
                     <button class="btn-text">View Details</button>
                 </div>
                 <div class="energy-stats">
@@ -1942,16 +2013,16 @@
                     </div>
                     <div class="energy-metrics">
                         <div class="metric">
-                            <span class="metric-label">Current Usage</span>
-                            <span class="metric-value">2.4 kWh</span>
+                            <span class="metric-label">Estimated Monthly Usage</span>
+                            <span class="metric-value">9 GWh</span>
                         </div>
                         <div class="metric">
                             <span class="metric-label">Daily Average</span>
-                            <span class="metric-value">8.5 kWh</span>
+                            <span class="metric-value">0.3 GWh</span>
                         </div>
                         <div class="metric">
-                            <span class="metric-label">Cost Today</span>
-                            <span class="metric-value"><i class="fa-solid fa-indian-rupee-sign"></i> 2.15</span>
+                            <span class="metric-label">Estimated Costing Per Day</span>
+                            <span class="metric-value"><i class="fa-solid fa-indian-rupee-sign"></i> 2.46 million</span>
                         </div>
                     </div>
                 </div>
@@ -2195,8 +2266,5 @@
             </form>
         </div>
     </div>
-
-    <!-- Load JavaScript files -->
-    <script src="{% static 'js/dashboard.js' %}"></script>
 </body>
 </html>
